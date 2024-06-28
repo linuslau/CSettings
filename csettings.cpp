@@ -194,7 +194,8 @@ public:
     std::string value(const std::string& path) {
         auto node = getNode(path);
         if (node.valid() && node.has_val()) {
-            std::string node_value = node.val().str;
+            std::string node_value_tmp = node.val().str;
+            std::string node_value = node_value_tmp.substr(0, node.val().size());
             size_t pos = node_value.find_first_of("\n ");
             if (pos != std::string::npos) {
                 node_value = node_value.substr(0, pos);
@@ -278,6 +279,23 @@ int main() {
             << "  name: John Doe\n"
             << "  email: johndoe@example.com\n";
     outfile.close();
+#endif
+
+#if 0
+    {
+        Settings settings(filename);
+        settings.setValue("/test/a", "abc");
+        settings.setValue("/test/b", "def");
+        settings.setValue("/test/c", "ghi");
+        std::string a = settings.value("/test/a");
+        std::string b = settings.value("/test/b");
+        std::string c = settings.value("/test/c");
+        std::cout << "test/a: " << a << std::endl;
+        std::cout << "test/b: " << b << std::endl;
+        std::cout << "test/c: " << c << std::endl;
+        settings.save();
+        return 1;
+    }
 #endif
 
     Settings settings(filename);
