@@ -191,7 +191,7 @@ public:
         }
     }
 
-    std::string value(const std::string& path) {
+    std::string value(const std::string& path, const std::string& default_value = "") {
         auto node = getNode(path);
         if (node.valid() && node.has_val()) {
             std::string node_value_tmp = node.val().str;
@@ -204,7 +204,7 @@ public:
         }
         else {
             std::cerr << "Invalid path or node has no value: " << path << std::endl;
-            return "";
+            return default_value;
         }
     }
 
@@ -446,6 +446,16 @@ int main() {
         settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "good");
         settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "god");
         settings10.save();
+    }
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        std::string ret = settings10.value("e/f/g/a/b/c/d", "goooooooood");
+        std::cout << "ret: " << ret << std::endl;
     }
 
     return 0;
