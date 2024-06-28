@@ -375,5 +375,60 @@ int main() {
         settings10.save();
     }
 
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("eeeeeee/ffffff/gggggg", " ");
+        settings10.save();
+    }
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("eeeeeee/ffffff/gggggg/a/b/c/d/e/f/g/h////", "good");
+        settings10.save();
+    }
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/h////", "god");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/h////", "good");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/h////", "goood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/h////", "gooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/h////", "goooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/h////", "goooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/h////", "gooooood");
+        settings10.save();
+    }
+
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goooooooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "gooooooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goooooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "gooooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "gooood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goood");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "good");
+        settings10.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "god");
+        settings10.save();
+    }
+
     return 0;
 }
