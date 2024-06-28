@@ -132,9 +132,8 @@ public:
                     node = child;
                 }
                 else {
-                    std::cout << "  Child node is present: " << token << std::endl;
+                    std::cout << "  Child node is present: " << token;
                     node = node[token.c_str()];
-                    std::cout << "overwrite = " << overwrite << std::endl;
                     if (overwrite) {
                         // node &= ryml::KEYVAL;
                         node.clear_flag(ryml::KEYVAL);
@@ -158,12 +157,13 @@ public:
                 }
             }
             else {
-                std::cerr << "token is empty" << std::endl;
+                std::cerr << "  Token is empty, ignore this iteration." << std::endl;
             }
         }
 
         if (!has_diff && !overwrite)
         {
+            std::cerr << "  NOT overwrite." << std::endl;
             return;
         }
 
@@ -174,6 +174,12 @@ public:
         node.set_val_serialized(cstr_value);
         //node.set_val(cstr_value);
         return;
+    }
+
+    void setValues(const std::string& path, const std::vector<std::pair<std::string, std::string>>& keyValues, bool overwrite = true) {
+        for (const auto& kv : keyValues) {
+            setValue(path + "/" + kv.first, kv.second, overwrite);
+        }
     }
 
     std::string value(const std::string& path) {
@@ -307,6 +313,18 @@ int main() {
     std::cout << "editor/tabSize: " << tabSize << std::endl;
     std::cout << "user/name: " << userName << std::endl;
     std::cout << "user/email: " << userEmail << std::endl;
+
+
+    Settings settings2(filename);
+    std::vector<std::pair<std::string, std::string>> keyValues = {
+        {"wrapMargin2", "200"},
+        {"wrapMargin3", "300"},
+        {"wrapMargin4", "400"},
+        {"wrapMargin5", "500"},
+    };
+
+    settings2.setValues("/editor", keyValues);
+    settings2.save();
 
     return 0;
 }
