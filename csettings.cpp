@@ -114,8 +114,12 @@ public:
         std::string value_copy = value;
         ryml::csubstr cstr_value = ryml::to_csubstr(value_copy);
 
+        // Replace backslashes with forward slashes
+        std::string modified_path = path;
+        std::replace(modified_path.begin(), modified_path.end(), '\\', '/');
+
         // Split the path into tokens
-        std::istringstream iss(path);
+        std::istringstream iss(modified_path);
         std::string token;
         auto node = tree_.rootref();
         bool has_diff = false;
@@ -367,7 +371,7 @@ int main() {
         std::cout << "Test " << std::endl;
         std::cout << "=============================================================" << std::endl;
         Settings settings10(filename);
-        settings10.setValue("a\b\c", "cccc");
+        settings10.setValue("a\\b\\c", "1234");
         settings10.save();
     }
 
