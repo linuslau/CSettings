@@ -267,18 +267,18 @@ int main() {
 
     Settings settings(filename);
 
-    settings.setValue("editor/wrapMargin", "100");
-    settings.setValue("editor/wrapMargin/xxx/yyy/zzz", "1111111111", false);
-    settings.setValue("editor/tabSize", "200");
-    settings.setValue("user/name", "Fokatu");
-    settings.setValue("user/email", "Fokatu@Fokatu.com");
-    settings.setValue("uuuu/vvvv/www/xxx/yyy/zzz", "2222222222");
-    settings.setValue("uuuu/vvvv/aaa/xxx/yyy/zzz", "3333333333");
+    settings.setValue("/editor/wrapMargin", "100");
+    settings.setValue("/editor/wrapMargin/xxx/yyy/zzz", "1111111111", false);
+    settings.setValue("/editor/tabSize", "200");
+    settings.setValue("/user/name", "Fokatu");
+    settings.setValue("/user/email", "Fokatu@Fokatu.com");
+    settings.setValue("/uuuu/vvvv/www/xxx/yyy/zzz", "2222222222");
+    settings.setValue("/uuuu/vvvv/aaa/xxx/yyy/zzz", "3333333333");
 
-    std::string wrapMargin = settings.value("editor/wrapMargin");
-    std::string tabSize = settings.value("editor/tabSize");
-    std::string userName = settings.value("user/name");
-    std::string userEmail = settings.value("user/email");
+    std::string wrapMargin = settings.value("/editor/wrapMargin");
+    std::string tabSize = settings.value("/editor/tabSize");
+    std::string userName = settings.value("/user/name");
+    std::string userEmail = settings.value("/user/email");
 
     std::cout << "Updated configuration:\n";
     std::cout << "editor/wrapMargin: " << wrapMargin << std::endl;
