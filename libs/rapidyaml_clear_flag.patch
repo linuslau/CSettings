@@ -1,0 +1,23 @@
+diff --git a/src/c4/yml/node.hpp b/src/c4/yml/node.hpp
+index b3f707f..d4ce611 100644
+--- a/src/c4/yml/node.hpp
++++ b/src/c4/yml/node.hpp
+@@ -1167,6 +1167,18 @@ public:
+         m_tree->_add_flags(m_id, t);
+     }
+ 
++    inline void operator&= (NodeType_e t)
++    {
++        _apply_seed();
++        m_tree->_rem_flags(m_id, t);
++    }
++
++    void clear_flag(NodeType_e t)
++    {
++        _apply_seed();
++        m_tree->_rem_flags(m_id, t);
++    }
++
+     inline void operator= (NodeInit const& v)
+     {
+         _apply_seed();
