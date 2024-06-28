@@ -103,7 +103,7 @@ public:
     }
 
     ~Settings() {
-        save();
+        // save();
         std::cout << "Settings object for file \"" << filename_ << "\" is being destroyed." << std::endl;
     }
 
@@ -330,6 +330,46 @@ int main() {
 
     settings2.setValues("/editor", keyValues);
     settings2.save();
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test Multiple Slash" << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("////aaaa///bbbb", "cccc");
+        settings10.save();
+    }
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("////aaaa", "cccc");
+        settings10.save();
+    }
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("////bbbb///", "cccc");
+        settings10.save();
+    }
+
+    //
+    {
+        std::cout << "=============================================================" << std::endl;
+        std::cout << "Test " << std::endl;
+        std::cout << "=============================================================" << std::endl;
+        Settings settings10(filename);
+        settings10.setValue("a\b\c", "cccc");
+        settings10.save();
+    }
 
     return 0;
 }
