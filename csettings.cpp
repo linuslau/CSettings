@@ -5,6 +5,70 @@
 #include "ryml.hpp"
 #include "ryml_std.hpp"
 
+void print_yaml_node(const ryml::ConstNodeRef& node, int indent = 0) {
+    std::string indent_str(indent, ' ');
+
+    if (node.is_map()) {
+        for (const auto& child : node) {
+            std::cout << indent_str << child.key() << ":";
+            if (child.has_val()) {
+                std::cout << " " << child.val() << "\n";
+            }
+            else {
+                std::cout << "\n";
+            }
+            print_yaml_node(child, indent + 2);
+        }
+    }
+    else if (node.is_seq()) {
+        for (const auto& child : node) {
+            std::cout << indent_str << "-";
+            if (child.has_val()) {
+                std::cout << " " << child.val() << "\n";
+            }
+            else {
+                std::cout << "\n";
+            }
+            print_yaml_node(child, indent + 2);
+        }
+    }
+    else if (node.is_val()) {
+        std::cout << indent_str << node.val() << "\n";
+    }
+}
+
+int test_parse_yaml_file() {
+
+    std::ifstream file("config.yaml");
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file.\n";
+        return 1;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string yaml_str = buffer.str();
+
+
+    ryml::Tree tree = ryml::parse_in_place(ryml::to_substr(yaml_str));
+
+    print_yaml_node(tree.rootref());
+
+    return 0;
+}
+
+void test_serialized()
+{
+    ryml::Tree tree = ryml::parse_in_arena("{a: b}");
+
+    ryml::NodeRef root = tree.rootref();
+
+    root["a"].set_val_serialized(12345);
+
+    std::string node_value = root["a"].val().str;
+    std::cout << "Node 'a' value after set_val_serialized: " << node_value << std::endl;
+}
+
 class Settings {
 public:
     Settings(const std::string& filename) : filename_(filename) {
@@ -180,6 +244,10 @@ private:
 };
 
 int main() {
+
+    //test_serialized();
+    //test_parse_yaml_file();
+
     const std::string filename = "config.yaml";
 
 #if 0
