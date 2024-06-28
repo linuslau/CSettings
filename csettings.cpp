@@ -102,6 +102,11 @@ public:
         }
     }
 
+    ~Settings() {
+        save();
+        std::cout << "Settings object for file \"" << filename_ << "\" is being destroyed." << std::endl;
+    }
+
     void setValue(const std::string& path, const std::string& value, bool overwrite = true) {
         std::cout << std::endl << "Setting value: " << value << " for path: " << path << std::endl;
 
