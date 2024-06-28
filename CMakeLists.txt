@@ -10,7 +10,7 @@ function(apply_patch_if_exists)
             RESULT_VARIABLE result
         )
         if(result)
-            message(FATAL_ERROR "Failed to apply patch: rapidYAML_clear_flag.patch")
+            message(WARNING "Failed to apply patch: rapidYAML_clear_flag.patch")
         else()
             message(STATUS "Patch applied successfully: rapidYAML_clear_flag.patch")
         endif()

@@ -38,7 +38,7 @@ public:
         }
     }
 
-    void setValue(const std::string& path, const std::string& value) {
+    void setValue(const std::string& path, const std::string& value, bool overwrite = true) {
         std::cout << std::endl << "Setting value: " << value << " for path: " << path << std::endl;
 
         // Convert value to csubstr
@@ -49,11 +49,13 @@ public:
         std::istringstream iss(path);
         std::string token;
         auto node = tree_.rootref();
+        bool has_diff = false;
 
         while (std::getline(iss, token, '/')) {
             if (!token.empty()) {
                 if (!node.has_child(token.c_str())) {
-                    std::cout << "  Node has No child: " << token << std::endl;
+                    has_diff = true;
+                    std::cout << "  Child node is NOT present: " << token << std::endl;
                     auto child = node.append_child();
                     // Check if it is the last token; if so, set it as a value, otherwise keep it as a MAP
                     if (iss.eof()) {
@@ -66,11 +68,14 @@ public:
                     node = child;
                 }
                 else {
-                    std::cout << "  Node has child: " << token;
+                    std::cout << "  Child node is present: " << token << std::endl;
                     node = node[token.c_str()];
-                    // node &= ryml::KEYVAL;
-                    node.clear_flag(ryml::KEYVAL);
-                    node |= ryml::KEYMAP;
+                    std::cout << "overwrite = " << overwrite << std::endl;
+                    if (overwrite) {
+                        // node &= ryml::KEYVAL;
+                        node.clear_flag(ryml::KEYVAL);
+                        node |= ryml::KEYMAP;
+                    }
                     std::cout << ", check child" << std::endl;
                 }
 
@@ -81,8 +86,11 @@ public:
                     std::cerr << "Invalid path segment: " << token << " (node is not valid)" << std::endl;
                     return;
                 }
-                else if (!node.is_map() && !iss.eof()) {
-                    std::cerr << "Invalid path segment: " << token << " (node is not a map and not at end of path)" << std::endl;
+                else if (!node.is_map()) {
+                    if (!iss.eof()) {
+                        std::cerr << "Invalid path segment: " << token << " (node is not a map and not at end of path)" << std::endl;
+                        return;
+                    }
                 }
             }
             else {
@@ -90,9 +98,15 @@ public:
             }
         }
 
+        if (!has_diff && !overwrite)
+        {
+            return;
+        }
+
         // Set the value for the final node
-        node.clear_flag(ryml::KEYMAP);
-        node |= ryml::KEYVAL;
+        node.clear_children();
+        node.clear_flag(ryml::MAP);
+        node |= ryml::VAL;
         node.set_val_serialized(cstr_value);
         //node.set_val(cstr_value);
         return;
@@ -186,6 +200,7 @@ int main() {
     Settings settings(filename);
 
     settings.setValue("editor/wrapMargin", "100");
+    settings.setValue("editor/wrapMargin/xxx/yyy/zzz", "1111111111", false);
     settings.setValue("editor/tabSize", "200");
     settings.setValue("user/name", "Fokatu");
     settings.setValue("user/email", "Fokatu@Fokatu.com");
@@ -204,10 +219,10 @@ int main() {
     std::cout << "user/email: " << userEmail << std::endl;
 
     // 修改其中一个值并保存
-    settings.setValue("editor/wrapMargin", "100");
-    settings.setValue("editor/tabSize", "200");
-    settings.setValue("user/name", "Fokatu");
-    settings.setValue("user/email", "Fokatu@Fokatu.com");
+    // settings.setValue("editor/wrapMargin", "100");
+    // settings.setValue("editor/tabSize", "200");
+    // settings.setValue("user/name", "Fokatu");
+    // settings.setValue("user/email", "Fokatu@Fokatu.com");
 
     settings.save();
 
