@@ -10,71 +10,93 @@ public:
     Settings(const std::string& filename) : filename_(filename) {
         std::ifstream file(filename_);
         if (!file.is_open()) {
-            std::cerr << "Failed to open file: " << filename_ << std::endl;
-            return;
+            std::cerr << "File not found, creating a new file: " << filename_ << std::endl;
+            std::ofstream new_file(filename_);
+            if (!new_file.is_open()) {
+                std::cerr << "Failed to create file: " << filename_ << std::endl;
+                return;
+            }
+            new_file.close();
         }
-        std::string yaml_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        file.close();
+        else {
+            std::string yaml_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            file.close();
+            buffer_ = yaml_content;
+        }
 
-        // 复制内容到一个可以修改的缓冲区
-        buffer_ = yaml_content; 
         ryml::substr yaml_substr = ryml::to_substr(buffer_);
         try {
             tree_ = ryml::parse_in_place(yaml_substr);
-        } catch (const std::exception& e) {
+        }
+        catch (const std::exception& e) {
             std::cerr << "Error parsing YAML: " << e.what() << std::endl;
+            tree_ = ryml::Tree();
+        }
+
+        if (!tree_.rootref().is_map()) {
+            tree_.rootref() |= ryml::MAP; // Ensure root is a map
         }
     }
 
     void setValue(const std::string& path, const std::string& value) {
+        std::cout << std::endl << "Setting value: " << value << " for path: " << path << std::endl;
 
-        std::cout << std::endl << std::endl;
-        std::cout << "Setting value: " << value << " for path: " << path << std::endl;
-
-        // Make a copy of value to ensure it remains valid
+        // Convert value to csubstr
         std::string value_copy = value;
-
-        // Convert to csubstr and print debug info
         ryml::csubstr cstr_value = ryml::to_csubstr(value_copy);
-        std::cout << "Converted csubstr value: " << std::string(cstr_value.str, cstr_value.len) << std::endl;
 
-        auto node = getNode(path);
+        // Split the path into tokens
+        std::istringstream iss(path);
+        std::string token;
+        auto node = tree_.rootref();
+
+        while (std::getline(iss, token, '/')) {
+            if (!token.empty()) {
+                if (!node.has_child(token.c_str())) {
+                    std::cout << "  Node has No child: " << token << std::endl;
+                    auto child = node.append_child();
+                    // Check if it is the last token; if so, set it as a value, otherwise keep it as a MAP
+                    if (iss.eof()) {
+                        child |= ryml::VAL;
+                    }
+                    else {
+                        child |= ryml::MAP;
+                    }
+                    child.set_key_serialized(ryml::to_csubstr(token));
+                    node = child;
+                }
+                else {
+                    std::cout << "  Node has child: " << token;
+                    node = node[token.c_str()];
+                    // node &= ryml::KEYVAL;
+                    node.clear_flag(ryml::KEYVAL);
+                    node |= ryml::KEYMAP;
+                    std::cout << ", check child" << std::endl;
+                }
+
+                std::cout << "      Token: " << token << ", Node valid: " << node.valid()
+                    << ", Node is_map: " << node.is_map() << ", iss.eof(): " << iss.eof() << std::endl;
+
+                if (!node.valid()) {
+                    std::cerr << "Invalid path segment: " << token << " (node is not valid)" << std::endl;
+                    return;
+                }
+                else if (!node.is_map() && !iss.eof()) {
+                    std::cerr << "Invalid path segment: " << token << " (node is not a map and not at end of path)" << std::endl;
+                }
+            }
+            else {
+                std::cerr << "token is empty" << std::endl;
+            }
+        }
+
+        // Set the value for the final node
+        node.clear_flag(ryml::KEYMAP);
+        node |= ryml::KEYVAL;
         node.set_val_serialized(cstr_value);
-        if (node.is_seed() || node.is_val()) {
-            node.set_val(cstr_value);
-            std::cout << "Node after setting value: " << node.val().str << std::endl;
-        }
-        else {
-            // std::cerr << "Invalid path: " << path << std::endl;
-        }
-
-        // std::cerr << "return: " << std::endl;
-        return;
-
-    }
-
-
-    /*
-    void setValue(const std::string& path, const std::string& value) {
-        std::cout << "Setting value: " << value << " for path: " << path << std::endl;
-
-        // Convert to csubstr and print debug info
-        ryml::csubstr cstr_value = ryml::to_csubstr(value);
-        std::cout << "Converted csubstr value: " << std::string(cstr_value.str, cstr_value.len) << std::endl;
-
-        auto node = getNode(path);
-        node.set_val(cstr_value);
-        if (node.is_seed() || node.is_val()) {
-            node.set_val(cstr_value);
-        }
-        else {
-            std::cerr << "Invalid path: " << path << std::endl;
-        }
-
-        std::cerr << "return: " << std::endl;
+        //node.set_val(cstr_value);
         return;
     }
-    */
 
     std::string value(const std::string& path) {
         auto node = getNode(path);
@@ -94,13 +116,11 @@ public:
 
 
     void save() {
-        std::cout << std::endl << std::endl;
-        std::cout << "Saving settings..." << std::endl;
 
-        // Print tree content before saving
-        // std::string buffer;
-        // ryml::emit_yaml(tree_, ryml::to_substr(buffer));
-        // std::cout << "Tree content before saving:\n" << buffer << std::endl;
+        std::cout << std::endl << "Saving settings to stdout" << std::endl;
+        size_t len = ryml::emit_yaml(tree_, tree_.root_id(), stdout);
+
+        std::cout << std::endl << "Saving settings to file" << std::endl;
 
         FILE* file = std::fopen(filename_.c_str(), "w");
         if (!file) {
@@ -108,8 +128,7 @@ public:
             return;
         }
 
-        size_t len = ryml::emit_yaml(tree_, tree_.root_id(), file);
-        // size_t len = fwrite(buffer.data(), 1, buffer.size(), file);
+        len = ryml::emit_yaml(tree_, tree_.root_id(), file);
         std::fclose(file);
 
         std::cout << "Settings saved to " << filename_ << " (" << len << " characters written)" << std::endl;
@@ -149,7 +168,7 @@ private:
 int main() {
     const std::string filename = "config.yaml";
 
-    // 创建或打开文件，并写入一些初始配置
+#if 0
     std::ofstream outfile(filename);
     if (!outfile.is_open()) {
         std::cerr << "Failed to create or open file: " << filename << std::endl;
@@ -162,15 +181,23 @@ int main() {
             << "  name: John Doe\n"
             << "  email: johndoe@example.com\n";
     outfile.close();
+#endif
 
-    // 读取并打印配置
     Settings settings(filename);
+
+    settings.setValue("editor/wrapMargin", "100");
+    settings.setValue("editor/tabSize", "200");
+    settings.setValue("user/name", "Fokatu");
+    settings.setValue("user/email", "Fokatu@Fokatu.com");
+    settings.setValue("uuuu/vvvv/www/xxx/yyy/zzz", "2222222222");
+    settings.setValue("uuuu/vvvv/aaa/xxx/yyy/zzz", "3333333333");
+
     std::string wrapMargin = settings.value("editor/wrapMargin");
     std::string tabSize = settings.value("editor/tabSize");
     std::string userName = settings.value("user/name");
     std::string userEmail = settings.value("user/email");
 
-    std::cout << "Initial configuration:\n\n";
+    std::cout << "Updated configuration:\n";
     std::cout << "editor/wrapMargin: " << wrapMargin << std::endl;
     std::cout << "editor/tabSize: " << tabSize << std::endl;
     std::cout << "user/name: " << userName << std::endl;
@@ -181,14 +208,10 @@ int main() {
     settings.setValue("editor/tabSize", "200");
     settings.setValue("user/name", "Fokatu");
     settings.setValue("user/email", "Fokatu@Fokatu.com");
+
     settings.save();
 
-    // 重新读取并打印配置
-    // std::cout << "\nUpdated configuration:\n";
-    // wrapMargin = settings.value("editor/wrapMargin");
-    // std::cout << "editor/wrapMargin: " << wrapMargin << std::endl;
 
-    // 读取并打印配置
     Settings settings1(filename);
     wrapMargin = settings1.value("editor/wrapMargin");
     tabSize = settings1.value("editor/tabSize");
