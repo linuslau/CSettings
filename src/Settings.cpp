@@ -135,7 +135,7 @@ void Settings::setValues(const std::string& path, const std::vector<std::pair<st
 
 std::string Settings::value(const std::string& path, const std::string& default_value) {
     auto node = getNode(path);
-    if (node.empty()) {
+    if (!node.empty()) {
         if (node.valid()) {
             if (node.is_val())
                 std::cerr << "Node has value: " << path << std::endl;
