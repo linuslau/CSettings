@@ -1,7 +1,7 @@
 #include "Settings.h"
 const std::string filename = "config.yml";
 void test_1_general_case();
-void test_2();
+void test_2_node_not_present();
 void test_3();
 void test_4();
 void test_5();
@@ -15,7 +15,7 @@ void test_12();
 
 int main() {
     test_1_general_case();
-    //test_2();
+    test_2_node_not_present();
     test_3();
     test_4();
     test_5();
@@ -31,6 +31,11 @@ int main() {
 
 void test_1_general_case()
 {
+    std::cout << std::endl << std::endl;
+    std::cout << "=============================================================" << std::endl;
+    std::cout << "test_1_general_case" << std::endl;
+    std::cout << "=============================================================" << std::endl;
+
     Settings settings(filename);
 
     settings.setValue("/application/version", "1.0.0");
@@ -127,8 +132,13 @@ void test_1_general_case()
     // settings.delete_file();
 }
 
-void test_2()
+void test_2_node_not_present()
 {
+    std::cout << std::endl << std::endl;
+    std::cout << "=============================================================" << std::endl;
+    std::cout << "test_2_node_not_present " << std::endl;
+    std::cout << "=============================================================" << std::endl;
+
     Settings settings(filename);
     std::string iamnotpresent = settings.value("/application/iamnotpresent");
     std::cout << "application/iamnotpresent: " << iamnotpresent << std::endl;

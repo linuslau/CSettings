@@ -135,17 +135,31 @@ void Settings::setValues(const std::string& path, const std::vector<std::pair<st
 
 std::string Settings::value(const std::string& path, const std::string& default_value) {
     auto node = getNode(path);
-    if (node.valid() && node.has_val()) {
-        std::string node_value_tmp = node.val().str;
-        std::string node_value = node_value_tmp.substr(0, node.val().size());
-        size_t pos = node_value.find_first_of("\n ");
-        if (pos != std::string::npos) {
-            node_value = node_value.substr(0, pos);
+    if (node.empty()) {
+        if (node.valid()) {
+            if (node.is_val())
+                std::cerr << "Node has value: " << path << std::endl;
+            if (node.has_val()) {
+                std::string node_value_tmp = node.val().str;
+                std::string node_value = node_value_tmp.substr(0, node.val().size());
+                size_t pos = node_value.find_first_of("\n ");
+                if (pos != std::string::npos) {
+                    node_value = node_value.substr(0, pos);
+                }
+                return node_value;
+            }
+            else {
+                std::cerr << "Node has no value: " << path << std::endl;
+                return default_value;
+            }
         }
-        return node_value;
+        else {
+            std::cerr << "Invalid path" << path << std::endl;
+            return default_value;
+        }
     }
     else {
-        std::cerr << "Invalid path or node has no value: " << path << std::endl;
+        std::cerr << "Invalid path, node not present: " << path << std::endl;
         return default_value;
     }
 }
@@ -198,8 +212,8 @@ c4::yml::NodeRef Settings::getNode(const std::string& path) {
     while (std::getline(iss, token, '/')) {
         if (!token.empty()) {
             if (!node.has_child(token.c_str())) {
-                node |= ryml::MAP;
                 node[token.c_str()] = ryml::NodeRef{};
+                break;
             }
             node = node[token.c_str()];
             if (!node.valid()) {
