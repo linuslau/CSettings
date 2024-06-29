@@ -10,30 +10,35 @@ const std::string filename = "config.yml";
 
 void test_1_general_case();
 void test_2_node_not_present();
-void test_3();
-void test_4();
-void test_5();
-void test_6();
-void test_7();
-void test_8();
-void test_9();
-void test_10();
-void test_11();
-void test_12();
+void test_2_1_node_not_present_ret_default();
+void test_3_batch_set_values();
+void test_3_1_batch_set_values_random_nodes();
+void test_3_2_batch_set_values_random_nodes_multiple_slashes();
+void test_4_multiple_slashes();
+void test_5_start_w_mutiple_slashes();
+void test_6_end_w_mutiple_slashes();
+void test_7_back_slash();
+void test_8_empty_value();
+void test_9_node_max_depths();
+void test_10_value_overwrite_len_increase();
+void test_11_value_overwrite_len_decrease();
 
 int main() {
+    PRINT_FUNCTION_NAME();
     test_1_general_case();
     test_2_node_not_present();
-    test_3();
-    test_4();
-    test_5();
-    test_6();
-    test_7();
-    test_8();
-    test_9();
-    test_10();
-    test_11();
-    //test_12();
+    test_2_1_node_not_present_ret_default();
+    test_3_batch_set_values();
+    test_3_1_batch_set_values_random_nodes();
+    test_3_2_batch_set_values_random_nodes_multiple_slashes();
+    test_4_multiple_slashes();
+    test_5_start_w_mutiple_slashes();
+    test_6_end_w_mutiple_slashes();
+    test_7_back_slash();
+    test_8_empty_value();
+    test_9_node_max_depths();
+    test_10_value_overwrite_len_increase();
+    test_11_value_overwrite_len_decrease();
     return 0;
 }
 
@@ -148,84 +153,139 @@ void test_2_node_not_present()
     settings.delete_file();
 }
 
-void test_3()
+void test_2_1_node_not_present_ret_default()
+{
+    PRINT_FUNCTION_NAME();
+
+    Settings settings(filename);
+    std::string iamnotpresent = settings.value("/application/iamnotpresent", "myDefaultValue");
+    std::cout << "application/iamnotpresent: " << iamnotpresent << std::endl;
+
+    settings.delete_file();
+}
+
+void test_3_batch_set_values()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
     std::vector<std::pair<std::string, std::string>> keyValues = {
-        {"wrapMargin2", "200"},
-        {"wrapMargin3", "300"},
-        {"wrapMargin4", "400"},
-        {"wrapMargin5", "500"},
+        {"maxConnections", "100"},
+        {"timeout", "30"},
+        {"retryAttempts", "3"},
+        {"enableCache", "true"},
     };
 
-    settings.setValues("/editor", keyValues);
+    settings.setValues("/network/config", keyValues);
     settings.save();
     settings.delete_file();
 }
 
-void test_4()
+
+void test_3_1_batch_set_values_random_nodes()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
-    settings.setValue("////aaaa///bbbb", "cccc");
+    std::vector<std::pair<std::string, std::string>> keyValues = {
+        {"1/2/3/maxConnections", "100"},
+        {"1/timeout", "30"},
+        {"1/2/retryAttempts", "3"},
+        {"enableCache", "true"},
+    };
+
+    settings.setValues("/network/config", keyValues);
     settings.save();
     settings.delete_file();
 }
 
-void test_5()
+void test_3_2_batch_set_values_random_nodes_multiple_slashes()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
-    settings.setValue("////aaaa", "cccc");
+
+    // Example key-values with random paths and multiple slashes
+    std::vector<std::pair<std::string, std::string>> keyValues = {
+        {"////maxConnections/////", "100"},
+        {"//timeout///", "30"},
+        {"retryAttempts///", "3"},
+        {"////enableCache", "true"},
+        {"///cacheSize///", "512"},
+        {"//proxyEnabled///", "false"},
+        {"//proxyPort", "8080"},
+        {"//compression", "gzip"},
+        {"////encryption///", "AES256"},
+        {"//loadBalancing/////", "round-robin"}
+    };
+
+    settings.setValues("/network/config", keyValues);
     settings.save();
     settings.delete_file();
 }
 
-void test_6()
+
+void test_4_multiple_slashes()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
-    settings.setValue("////bbbb///", "cccc");
+    settings.setValue("////network///config///////////proxyPort", "8080");
     settings.save();
     settings.delete_file();
 }
 
-void test_7()
+void test_5_start_w_mutiple_slashes()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
-    settings.setValue("a\\b\\c", "1234");
+    settings.setValue("////timeout", "8888");
     settings.save();
     settings.delete_file();
 }
 
-void test_8()
+void test_6_end_w_mutiple_slashes()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
-    settings.setValue("eeeeeee/ffffff/gggggg", " ");
+    settings.setValue("////preferences///", "dark");
     settings.save();
     settings.delete_file();
 }
 
-void test_9()
+void test_7_back_slash()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
-    settings.setValue("eeeeeee/ffffff/gggggg/a/b/c/d/e/f/g/h////", "good");
+    settings.setValue("\\schedule\\time", "12:34");
     settings.save();
     settings.delete_file();
 }
 
-void test_10()
+void test_8_empty_value()
+{
+    PRINT_FUNCTION_NAME();
+
+    Settings settings(filename);
+    settings.setValue("features/enableExperimental/featureX", " ");
+    settings.save();
+    settings.delete_file();
+}
+
+void test_9_node_max_depths()
+{
+    PRINT_FUNCTION_NAME();
+
+    Settings settings(filename);
+    settings.setValue("a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t", "cool");
+    settings.save();
+    settings.delete_file();
+}
+
+void test_10_value_overwrite_len_increase()
 {
     PRINT_FUNCTION_NAME();
 
@@ -241,29 +301,20 @@ void test_10()
     settings.delete_file();
 }
 
-void test_11()
+void test_11_value_overwrite_len_decrease()
 {
     PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goooooooood");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "gooooooood");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goooooood");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "gooooood");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goooood");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "gooood");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goood");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "good");
-    settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "god");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "goooooooood");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "gooooooood");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "goooooood");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "gooooood");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "goooood");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "gooood");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "goood");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "good");
+    settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "god");
     settings.save();
     settings.delete_file();
-}
-
-void test_12()
-{
-    PRINT_FUNCTION_NAME();
- 
-    Settings settings(filename);
-    std::string ret = settings.value("e/f/g/a/b/c/d", "goooooooood");
-    std::cout << "ret: " << ret << std::endl;
 }
