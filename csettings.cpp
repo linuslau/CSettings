@@ -170,18 +170,17 @@ public:
             }
         }
 
-        if (!has_diff && !overwrite)
+        if (has_diff || overwrite)
         {
-            std::cerr << "  NOT overwrite." << std::endl;
-            return;
+            std::cerr << "  has difference or need overwrite." << std::endl;
+            // Set the value for the final node
+            node.clear_children();
+            node.clear_flag(ryml::MAP);
+            node |= ryml::VAL;
+            node.set_val_serialized(cstr_value);
+            //node.set_val(cstr_value);
         }
 
-        // Set the value for the final node
-        node.clear_children();
-        node.clear_flag(ryml::MAP);
-        node |= ryml::VAL;
-        node.set_val_serialized(cstr_value);
-        //node.set_val(cstr_value);
         return;
     }
 
