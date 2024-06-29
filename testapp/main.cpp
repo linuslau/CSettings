@@ -22,6 +22,8 @@ void test_8_empty_value();
 void test_9_node_max_depths();
 void test_10_value_overwrite_len_increase();
 void test_11_value_overwrite_len_decrease();
+void test_12_1_conflict_map_over_key();
+void test_12_2_conflict_key_over_map();
 
 int main() {
     PRINT_FUNCTION_NAME();
@@ -39,6 +41,8 @@ int main() {
     test_9_node_max_depths();
     test_10_value_overwrite_len_increase();
     test_11_value_overwrite_len_decrease();
+    test_12_1_conflict_map_over_key();
+    test_12_2_conflict_key_over_map();
     return 0;
 }
 
@@ -316,5 +320,37 @@ void test_11_value_overwrite_len_decrease()
     settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "good");
     settings.setValue("e/f/g/a/b/c/d/e/f/g/i////", "god");
     settings.save();
+    settings.delete_file();
+}
+
+void test_12_1_conflict_map_over_key()
+{
+    PRINT_FUNCTION_NAME();
+
+    Settings settings(filename);
+    settings.setValue("/database/connection/retry", "5");
+    settings.setValue("/database/connection/retry/attempts", "5");
+    settings.save();
+
+    settings.setValue("/database/connection/retry", "5");
+    settings.setValue("/database/connection/retry/attempts", "5", false);
+    settings.save();
+    settings.delete_file();
+
+}
+
+void test_12_2_conflict_key_over_map()
+{
+    PRINT_FUNCTION_NAME();
+
+    Settings settings(filename);
+    settings.setValue("/database/connection/retry/attempts", "5");
+    settings.setValue("/database/connection/retry", "5");
+    settings.save();
+
+    settings.setValue("/database/connection/retry/attempts", "5");
+    settings.setValue("/database/connection/retry", "5", false);
+    settings.save();
+
     settings.delete_file();
 }
