@@ -1,5 +1,13 @@
 #include "Settings.h"
 const std::string filename = "config.yml";
+
+#define PRINT_FUNCTION_NAME() do { \
+    std::cout << std::endl << std::endl; \
+    std::cout << "=============================================================" << std::endl; \
+    std::cout << __FUNCTION__ << std::endl; \
+    std::cout << "=============================================================" << std::endl; \
+} while (0)
+
 void test_1_general_case();
 void test_2_node_not_present();
 void test_3();
@@ -31,10 +39,7 @@ int main() {
 
 void test_1_general_case()
 {
-    std::cout << std::endl << std::endl;
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "test_1_general_case" << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
 
@@ -134,10 +139,7 @@ void test_1_general_case()
 
 void test_2_node_not_present()
 {
-    std::cout << std::endl << std::endl;
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "test_2_node_not_present " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
 
     Settings settings(filename);
     std::string iamnotpresent = settings.value("/application/iamnotpresent");
@@ -146,9 +148,10 @@ void test_2_node_not_present()
     settings.delete_file();
 }
 
-
 void test_3()
 {
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     std::vector<std::pair<std::string, std::string>> keyValues = {
         {"wrapMargin2", "200"},
@@ -164,9 +167,8 @@ void test_3()
 
 void test_4()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test Multiple Slash" << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("////aaaa///bbbb", "cccc");
     settings.save();
@@ -175,9 +177,8 @@ void test_4()
 
 void test_5()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("////aaaa", "cccc");
     settings.save();
@@ -186,9 +187,8 @@ void test_5()
 
 void test_6()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("////bbbb///", "cccc");
     settings.save();
@@ -197,9 +197,8 @@ void test_6()
 
 void test_7()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("a\\b\\c", "1234");
     settings.save();
@@ -208,9 +207,8 @@ void test_7()
 
 void test_8()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("eeeeeee/ffffff/gggggg", " ");
     settings.save();
@@ -219,9 +217,8 @@ void test_8()
 
 void test_9()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("eeeeeee/ffffff/gggggg/a/b/c/d/e/f/g/h////", "good");
     settings.save();
@@ -230,9 +227,8 @@ void test_9()
 
 void test_10()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("e/f/g/a/b/c/d/e/f/g/h////", "god");
     settings.setValue("e/f/g/a/b/c/d/e/f/g/h////", "good");
@@ -247,9 +243,8 @@ void test_10()
 
 void test_11()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+
     Settings settings(filename);
     settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "goooooooood");
     settings.setValue("e/f/g/a/b/c/d/e/f/g/i/i///", "gooooooood");
@@ -266,9 +261,8 @@ void test_11()
 
 void test_12()
 {
-    std::cout << "=============================================================" << std::endl;
-    std::cout << "Test " << std::endl;
-    std::cout << "=============================================================" << std::endl;
+    PRINT_FUNCTION_NAME();
+ 
     Settings settings(filename);
     std::string ret = settings.value("e/f/g/a/b/c/d", "goooooooood");
     std::cout << "ret: " << ret << std::endl;
