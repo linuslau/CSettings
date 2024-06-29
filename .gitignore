@@ -33,6 +33,7 @@
 
 # More
 .vs/
+.vscode/
 out/
 build/
 b/

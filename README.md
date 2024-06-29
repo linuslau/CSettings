@@ -1,6 +1,42 @@
 # CSettings
 
-# Project Introduction
+- [CSettings](#csettings)
+  - [Project structure](#project-structure)
+  - [Build command](#build-command)
+  - [Run APP](#run-app)
+  - [Project Introduction](#project-introduction)
+  - [Features](#features)
+  - [Example](#example)
+  - [Contribution](#contribution)
+
+## Project structure
+
+CSettings/
+├── include/
+│   └── Settings.h
+├── src/
+│   ├── CMakeLists.txt
+│   └── Settings.cpp
+├── libs/
+│   └── rapidyaml/
+├── testapp/
+│   ├── CMakeLists.txt
+│   └── main.cpp
+├── CMakeLists.txt
+
+## Build command
+
+cd CSettings
+cmake -G "Visual Studio 17 2022" -A x64 -B out
+cmake --build out --config Release
+
+## Run APP
+
+cd out/testapp/Release/
+SettingsTest.exe
+
+## Project Introduction
+
 Welcome to the GitHub page of this project!
 
 I have always enjoyed using YAML for data configuration, and RapidYAML has been my favorite library for this purpose. It strikes a perfect balance in size, ease of use, and well-documented code examples. However, I wished it could be even more convenient because, in most cases, data configuration involves simple read and write operations.
@@ -9,12 +45,13 @@ When I came across QSettings from my friend Fokatu, I was impressed by its simpl
 
 The goal of this project is to provide an API that mimics QSettings, allowing for easy reading and writing of YAML files, with robust support for hierarchical data structures. I hope this project can help you in your endeavors, and I welcome any suggestions or contributions!
 
-# Features
+## Features
+
 Simple API: An interface similar to QSettings for intuitive usage
 Hierarchical Structure Support: Easily read and write nested data
 Powered by RapidYAML: Leverage the excellent YAML parsing capabilities
 
-# Example
+## Example
 
 ```
 // Example: Setting values
@@ -30,7 +67,8 @@ Installation and Usage
 Please refer to the README.md file for detailed installation and usage instructions.
 ```
 
-# Contribution
+## Contribution
+
 Feel free to submit Issues and Pull Requests. Let's improve this project together!
 
 ___

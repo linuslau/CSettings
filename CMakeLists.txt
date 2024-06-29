@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
-project(MyProject)
+# Set the project name
+project(SettingsLibrary)
+
+# Add debug mode option
+option(DEBUG_MODE "Enable debug mode" ON)
+
+# Settings.lib won't generated w/o this config.
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 # Function to apply the patch if the submodule exists
 function(apply_patch_if_exists)
@@ -22,11 +29,16 @@ endfunction()
 # Apply the patch before building the project
 apply_patch_if_exists()
 
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Define preprocessor macro based on DEBUG_MODE option
+if(DEBUG_MODE)
+    add_definitions(-DDEBUG_MODE)
+endif()
+
+# Add subdirectories
 add_subdirectory(libs/rapidyaml)
-
-add_executable(csettings_app csettings.cpp)
-target_link_libraries(csettings_app ryml)
-
-add_custom_target(run
-    COMMAND $<TARGET_FILE:csettings_app>
-    DEPENDS csettings_app)
+add_subdirectory(src)
+add_subdirectory(testapp)
