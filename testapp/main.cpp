@@ -24,6 +24,7 @@ void test_10_value_overwrite_len_increase();
 void test_11_value_overwrite_len_decrease();
 void test_12_1_conflict_map_over_key();
 void test_12_2_conflict_key_over_map();
+void test_13_parse_yaml_file();
 
 int main() {
     PRINT_FUNCTION_NAME();
@@ -43,6 +44,7 @@ int main() {
     test_11_value_overwrite_len_decrease();
     test_12_1_conflict_map_over_key();
     test_12_2_conflict_key_over_map();
+    test_13_parse_yaml_file();
     return 0;
 }
 
@@ -352,5 +354,14 @@ void test_12_2_conflict_key_over_map()
     settings.setValue("/database/connection/retry", "5", false);
     settings.save();
 
+    settings.delete_file();
+}
+
+void test_13_parse_yaml_file()
+{
+    PRINT_FUNCTION_NAME();
+    test_1_general_case();
+    Settings settings(filename);
+    settings.parseYamlFile();
     settings.delete_file();
 }

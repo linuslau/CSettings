@@ -229,7 +229,7 @@ c4::yml::NodeRef Settings::getNode(const std::string& path) {
     return node;
 }
 
-void Settings::print_yaml_node(const ryml::ConstNodeRef& node, int indent) {
+void Settings::printYamlNode(const ryml::ConstNodeRef& node, int indent) {
     std::string indent_str(indent, ' ');
 
     if (node.is_map()) {
@@ -241,7 +241,7 @@ void Settings::print_yaml_node(const ryml::ConstNodeRef& node, int indent) {
             else {
                 std::cout << "\n";
             }
-            print_yaml_node(child, indent + 2);
+            printYamlNode(child, indent + 2);
         }
     }
     else if (node.is_seq()) {
@@ -253,7 +253,7 @@ void Settings::print_yaml_node(const ryml::ConstNodeRef& node, int indent) {
             else {
                 std::cout << "\n";
             }
-            print_yaml_node(child, indent + 2);
+            printYamlNode(child, indent + 2);
         }
     }
     else if (node.is_val()) {
@@ -261,9 +261,11 @@ void Settings::print_yaml_node(const ryml::ConstNodeRef& node, int indent) {
     }
 }
 
-int Settings::test_parse_yaml_file() {
+int Settings::parseYamlFile(const std::string &filename) {
 
-    std::ifstream file("config.yml");
+    std::string file_to_parse = filename.empty() ? filename_ : filename;
+
+    std::ifstream file(file_to_parse);
     if (!file.is_open()) {
         std::cerr << "Error: Could not open file.\n";
         return 1;
@@ -273,15 +275,14 @@ int Settings::test_parse_yaml_file() {
     buffer << file.rdbuf();
     std::string yaml_str = buffer.str();
 
-
     ryml::Tree tree = ryml::parse_in_place(ryml::to_substr(yaml_str));
 
-    print_yaml_node(tree.rootref());
+    printYamlNode(tree.rootref());
 
     return 0;
 }
 
-void Settings::test_serialized()
+void Settings::testSerialized()
 {
     ryml::Tree tree = ryml::parse_in_arena("{a: b}");
 

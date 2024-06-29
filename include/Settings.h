@@ -25,12 +25,12 @@ public:
     std::string value(const std::string& path, const std::string& default_value = "");
     void save();
     bool delete_file(const std::string &filename = "");
+    int  parseYamlFile(const std::string &filename = "");
 
 private:
     c4::yml::NodeRef getNode(const std::string& path);
-    void print_yaml_node(const ryml::ConstNodeRef& node, int indent = 0);
-    int  test_parse_yaml_file();
-    void test_serialized();
+    void printYamlNode(const ryml::ConstNodeRef& node, int indent = 0);
+    void testSerialized();
 
     std::string filename_;
     std::string buffer_;
