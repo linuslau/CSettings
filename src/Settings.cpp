@@ -1,4 +1,4 @@
-#include "Settings.h"
+#include "Settings.hpp"
 
 Settings::Settings() : filename_("config.yml"), valid_(true) {
     initialize("config.yml");

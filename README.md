@@ -13,7 +13,7 @@
 
 CSettings/
 ├── include/
-│   └── Settings.h
+│   └── Settings.hpp
 ├── src/
 │   ├── CMakeLists.txt
 │   └── Settings.cpp

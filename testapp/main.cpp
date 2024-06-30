@@ -1,4 +1,4 @@
-#include "Settings.h"
+#include "Settings.hpp"
 const std::string filename = "config.yml";
 
 #define PRINT_FUNCTION_NAME() do { \
