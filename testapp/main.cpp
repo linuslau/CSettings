@@ -25,6 +25,8 @@ void test_11_value_overwrite_len_decrease();
 void test_12_1_conflict_map_over_key();
 void test_12_2_conflict_key_over_map();
 void test_13_parse_yaml_file();
+void test_14_file_path_present();
+void test_15_file_path_not_present();
 
 int main() {
     PRINT_FUNCTION_NAME();
@@ -45,6 +47,8 @@ int main() {
     test_12_1_conflict_map_over_key();
     test_12_2_conflict_key_over_map();
     test_13_parse_yaml_file();
+    test_14_file_path_present();
+    test_15_file_path_not_present();
     return 0;
 }
 
@@ -364,4 +368,51 @@ void test_13_parse_yaml_file()
     Settings settings(filename);
     settings.parseYamlFile();
     settings.delete_file();
+}
+
+void test_14_file_path_present()
+{
+    PRINT_FUNCTION_NAME();
+    std::string file_path = "c:/Users/kz/Documents/config.yml";
+
+    Settings settings(file_path);
+
+    settings.setValue("/application/version", "1.0.0");
+    settings.setValue("/application/update/checkInterval", "7");
+    settings.setValue("/database/connection/timeout", "30");
+    settings.setValue("/database/connection/retry/attempts", "5");
+    settings.setValue("/features/enableExperimental/featureX", "true");
+    settings.setValue("/features/enableExperimental/featureY", "false");
+
+    std::string appVersion = settings.value("/application/version");
+    std::string updateCheckInterval = settings.value("/application/update/checkInterval");
+    std::string dbConnectionTimeout = settings.value("/database/connection/timeout");
+    std::string dbConnectionRetryAttempts = settings.value("/database/connection/retry/attempts");
+    std::string featureXEnabled = settings.value("/features/enableExperimental/featureX");
+    std::string featureYEnabled = settings.value("/features/enableExperimental/featureY");
+
+    std::cout << "/application/version: " << appVersion << std::endl;
+    std::cout << "/application/update/checkInterval: " << updateCheckInterval << std::endl;
+    std::cout << "/database/connection/timeout: " << dbConnectionTimeout << std::endl;
+    std::cout << "/database/connection/retry/attempts: " << dbConnectionRetryAttempts << std::endl;
+    std::cout << "/features/enableExperimental/featureX: " << featureXEnabled << std::endl;
+    std::cout << "/features/enableExperimental/featureY: " << featureYEnabled << std::endl;
+
+    settings.save();
+}
+
+void test_15_file_path_not_present()
+{
+    PRINT_FUNCTION_NAME();
+    std::string file_path = "c:/Users/WhoAmI/Documents/config.yml";
+    Settings settings(file_path);
+    try {
+        settings.setValue("/application/version", "1.0.0");
+    }
+    catch (const std::exception& e) {
+            std::cerr << "Exception: " << e.what() << std::endl;
+            // return;
+    }
+    std::cout << "Do something else" << std::endl;
+    return;
 }

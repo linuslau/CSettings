@@ -7,7 +7,10 @@ Settings::Settings(const std::string& filename) : filename_(filename) {
         std::cerr << "File not found, creating a new file: " << filename_ << std::endl;
         std::ofstream new_file(filename_);
         if (!new_file.is_open()) {
+            std::string error_message = getLastErrorAsString();
             std::cerr << "Failed to create file: " << filename_ << std::endl;
+            std::cerr << "Error: " << error_message << std::endl;
+            throw std::runtime_error("Failed to create file: " + filename_ + ". Error: " + error_message);
             return;
         }
         new_file.close();
@@ -227,6 +230,27 @@ c4::yml::NodeRef Settings::getNode(const std::string& path) {
         }
     }
     return node;
+}
+
+std::string Settings::getLastErrorAsString() {
+    // Get the error code
+    DWORD errorMessageID = ::GetLastError();
+    if (errorMessageID == 0) {
+        return std::string(); // No error message has been recorded
+    }
+
+    LPSTR messageBuffer = nullptr;
+    // Convert the error code to a readable message
+    size_t size = FormatMessageA(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+    std::string message(messageBuffer, size);
+
+    // Free the buffer allocated by FormatMessage
+    LocalFree(messageBuffer);
+
+    return message;
 }
 
 void Settings::printYamlNode(const ryml::ConstNodeRef& node, int indent) {

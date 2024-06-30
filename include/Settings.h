@@ -6,8 +6,10 @@
 #include <sstream>
 #include <cstdio>
 #include <filesystem>
+#include <stdexcept>
 #include "ryml.hpp"
 #include "ryml_std.hpp"
+#include <windows.h>
 
 #ifdef DEBUG_MODE
     #define DEBUG_LOG(x) std::cout << x << std::endl
@@ -29,6 +31,7 @@ public:
 
 private:
     c4::yml::NodeRef getNode(const std::string& path);
+    std::string getLastErrorAsString();
     void printYamlNode(const ryml::ConstNodeRef& node, int indent = 0);
     void testSerialized();
 
