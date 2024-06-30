@@ -19,6 +19,7 @@
 
 class Settings {
 public:
+    Settings();
     Settings(const std::string& filename);
     ~Settings();
 
@@ -32,6 +33,7 @@ public:
     std::string Settings::getLastError() const;
 
 private:
+    void initialize(const std::string& filename);
     c4::yml::NodeRef getNode(const std::string& path);
     std::string getLastErrorAsString();
     void printYamlNode(const ryml::ConstNodeRef& node, int indent = 0);

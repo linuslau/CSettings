@@ -1,7 +1,14 @@
 #include "Settings.h"
-namespace fs = std::filesystem;
 
-Settings::Settings(const std::string& filename) : filename_(filename), valid_(true) {
+Settings::Settings() : filename_("config.yml"), valid_(true) {
+    initialize("config.yml");
+}
+
+Settings::Settings(const std::string& filename) : filename_(filename.empty() ? "config.yml" : filename), valid_(true) {
+    initialize(filename);
+}
+
+void Settings::initialize(const std::string& filename) {
     std::ifstream file(filename_);
     if (!file.is_open()) {
         std::cerr << "File not found, creating a new file: " << filename_ << std::endl;
@@ -195,15 +202,15 @@ void Settings::save() {
 bool Settings::delete_file(const std::string &filename) {
     std::string file_to_delete = filename.empty() ? filename_ : filename;
     try {
-        if (fs::exists(file_to_delete)) {
-            fs::remove(file_to_delete);
+        if (std::filesystem::exists(file_to_delete)) {
+            std::filesystem::remove(file_to_delete);
             std::cout << "File " << file_to_delete << " deleted successfully." << std::endl;
             return true;
         } else {
             std::cerr << "File " << file_to_delete << " does not exist." << std::endl;
             return false;
         }
-    } catch (const fs::filesystem_error& e) {
+    } catch (const std::filesystem::filesystem_error& e) {
         std::cerr << "Filesystem error: " << e.what() << std::endl;
         return false;
     } catch (const std::exception& e) {

@@ -28,6 +28,7 @@ void test_13_parse_yaml_file();
 void test_14_file_path_present();
 void test_14_1_file_path_not_present();
 void test_14_2_file_path_not_present_check();
+void test_15_filename_empty();
 
 int main() {
     PRINT_FUNCTION_NAME();
@@ -51,6 +52,7 @@ int main() {
     test_14_file_path_present();
     //test_14_1_file_path_not_present();
     test_14_2_file_path_not_present_check();
+    test_15_filename_empty();
     return 0;
 }
 
@@ -434,4 +436,34 @@ void test_14_2_file_path_not_present_check()
         settings.setValue("/application/version", "1.0.0");
     }
     return;
+}
+
+void test_15_filename_empty()
+{
+    PRINT_FUNCTION_NAME();
+
+    Settings settings;
+
+    settings.setValue("/application/version", "1.0.0");
+    settings.setValue("/application/update/checkInterval", "7");
+    settings.setValue("/database/connection/timeout", "30");
+    settings.setValue("/database/connection/retry/attempts", "5");
+    settings.setValue("/features/enableExperimental/featureX", "true");
+    settings.setValue("/features/enableExperimental/featureY", "false");
+
+    std::string appVersion = settings.value("/application/version");
+    std::string updateCheckInterval = settings.value("/application/update/checkInterval");
+    std::string dbConnectionTimeout = settings.value("/database/connection/timeout");
+    std::string dbConnectionRetryAttempts = settings.value("/database/connection/retry/attempts");
+    std::string featureXEnabled = settings.value("/features/enableExperimental/featureX");
+    std::string featureYEnabled = settings.value("/features/enableExperimental/featureY");
+
+    std::cout << "/application/version: " << appVersion << std::endl;
+    std::cout << "/application/update/checkInterval: " << updateCheckInterval << std::endl;
+    std::cout << "/database/connection/timeout: " << dbConnectionTimeout << std::endl;
+    std::cout << "/database/connection/retry/attempts: " << dbConnectionRetryAttempts << std::endl;
+    std::cout << "/features/enableExperimental/featureX: " << featureXEnabled << std::endl;
+    std::cout << "/features/enableExperimental/featureY: " << featureYEnabled << std::endl;
+
+    settings.save();
 }
