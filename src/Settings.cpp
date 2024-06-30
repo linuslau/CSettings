@@ -1,7 +1,7 @@
 #include "Settings.h"
 namespace fs = std::filesystem;
 
-Settings::Settings(const std::string& filename) : filename_(filename) {
+Settings::Settings(const std::string& filename) : filename_(filename), valid_(true) {
     std::ifstream file(filename_);
     if (!file.is_open()) {
         std::cerr << "File not found, creating a new file: " << filename_ << std::endl;
@@ -10,7 +10,8 @@ Settings::Settings(const std::string& filename) : filename_(filename) {
             std::string error_message = getLastErrorAsString();
             std::cerr << "Failed to create file: " << filename_ << std::endl;
             std::cerr << "Error: " << error_message << std::endl;
-            throw std::runtime_error("Failed to create file: " + filename_ + ". Error: " + error_message);
+            valid_ = false;
+            lastError_ = "Failed to create file: " + filename_ + ", Error: " + error_message;
             return;
         }
         new_file.close();
@@ -28,6 +29,9 @@ Settings::Settings(const std::string& filename) : filename_(filename) {
     catch (const std::exception& e) {
         std::cerr << "Error parsing YAML: " << e.what() << std::endl;
         tree_ = ryml::Tree();
+        valid_ = false;
+        lastError_ = "Error parsing YAML: " + std::string(e.what());
+        return;
     }
 
     if (!tree_.rootref().is_map()) {
@@ -206,6 +210,14 @@ bool Settings::delete_file(const std::string &filename) {
         std::cerr << "Exception: " << e.what() << std::endl;
         return false;
     }
+}
+
+bool Settings::isValid() const {
+    return valid_;
+}
+
+std::string Settings::getLastError() const {
+    return lastError_;
 }
 
 c4::yml::NodeRef Settings::getNode(const std::string& path) {

@@ -28,6 +28,8 @@ public:
     void save();
     bool delete_file(const std::string &filename = "");
     int  parseYamlFile(const std::string &filename = "");
+    bool Settings::isValid() const;
+    std::string Settings::getLastError() const;
 
 private:
     c4::yml::NodeRef getNode(const std::string& path);
@@ -38,6 +40,8 @@ private:
     std::string filename_;
     std::string buffer_;
     ryml::Tree tree_;
+    bool valid_;
+    std::string lastError_;
 };
 
 #endif // SETTINGS_H

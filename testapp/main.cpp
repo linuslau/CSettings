@@ -26,7 +26,8 @@ void test_12_1_conflict_map_over_key();
 void test_12_2_conflict_key_over_map();
 void test_13_parse_yaml_file();
 void test_14_file_path_present();
-void test_15_file_path_not_present();
+void test_14_1_file_path_not_present();
+void test_14_2_file_path_not_present_check();
 
 int main() {
     PRINT_FUNCTION_NAME();
@@ -48,7 +49,8 @@ int main() {
     test_12_2_conflict_key_over_map();
     test_13_parse_yaml_file();
     test_14_file_path_present();
-    test_15_file_path_not_present();
+    //test_14_1_file_path_not_present();
+    test_14_2_file_path_not_present_check();
     return 0;
 }
 
@@ -401,7 +403,7 @@ void test_14_file_path_present()
     settings.save();
 }
 
-void test_15_file_path_not_present()
+void test_14_1_file_path_not_present()
 {
     PRINT_FUNCTION_NAME();
     std::string file_path = "c:/Users/WhoAmI/Documents/config.yml";
@@ -414,5 +416,22 @@ void test_15_file_path_not_present()
             // return;
     }
     std::cout << "Do something else" << std::endl;
+    return;
+}
+
+void test_14_2_file_path_not_present_check()
+{
+    PRINT_FUNCTION_NAME();
+    std::string file_path = "c:/Users/WhoAmI/Documents/config.yml";
+    Settings settings(file_path);
+
+    if (!settings.isValid()) {
+        std::cerr << "Failed to initialize settings. Error: \n" << settings.getLastError() << std::endl;
+        return;
+    }
+    else {
+        std::cout << "Do something else" << std::endl;
+        settings.setValue("/application/version", "1.0.0");
+    }
     return;
 }
