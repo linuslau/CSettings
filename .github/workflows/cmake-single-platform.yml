@@ -22,12 +22,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: true # Initialize and update submodules
+        submodules: recursive # Initialize and update all submodules recursively
 
     - name: Initialize and update submodules
       run: |
-        git submodule init
-        git submodule update
+        git submodule update --init --recursive
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
