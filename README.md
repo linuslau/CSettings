@@ -46,8 +46,10 @@ CSettings/
 ```
 
 ## Build command
+- Don't forget --recursive, as this project depends on [RapidYAML](https://github.com/biojppm/rapidyaml) as a submodule.
 
 ```
+git clone --recursive https://github.com/linuslau/CSettings.git
 cd CSettings
 cmake -G "Visual Studio 17 2022" -A x64 -B outs
 cmake --build out --config Release
