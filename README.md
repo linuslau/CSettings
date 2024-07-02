@@ -1,16 +1,36 @@
 # CSettings
 
 - [CSettings](#csettings)
+  - [Purpose](#purpose)
   - [Project structure](#project-structure)
   - [Build command](#build-command)
-  - [Run APP](#run-app)
+  - [Run sample app](#run-sample-app)
   - [Project Introduction](#project-introduction)
   - [Features](#features)
-  - [Example](#example)
   - [Contribution](#contribution)
 
-## Project structure
+## Purpose
+With C++, To simplify the usage of YAML as a config file, similar to [QSettings](https://doc.qt.io/qt-6/qsettings.html), you can read/write tree-like key/value pairs easily. Here's an approach you can take:
 
+```cpp
+#include "Settings.hpp"
+Settings settings("config.yml");
+settings.setValue("/database/connection/retry/attempts", "5");
+std::string retryAttempts = settings.value("/database/connection/retry/attempts");
+settings.save();
+```
+Check config.yml result as below.
+```
+database:
+  connection:
+    retry:
+      attempts: 5
+```
+
+Check testapp/main.cpp for more.
+
+## Project structure
+```
 CSettings/
 ├── include/
 │   └── Settings.hpp
@@ -23,17 +43,21 @@ CSettings/
 │   ├── CMakeLists.txt
 │   └── main.cpp
 ├── CMakeLists.txt
+```
 
 ## Build command
 
+```
 cd CSettings
-cmake -G "Visual Studio 17 2022" -A x64 -B out
+cmake -G "Visual Studio 17 2022" -A x64 -B outs
 cmake --build out --config Release
+```
 
-## Run APP
-
+## Run sample app
+```
 cd out/testapp/Release/
 SettingsTest.exe
+```
 
 ## Project Introduction
 
@@ -50,22 +74,6 @@ The goal of this project is to provide an API that mimics QSettings, allowing fo
 Simple API: An interface similar to QSettings for intuitive usage
 Hierarchical Structure Support: Easily read and write nested data
 Powered by RapidYAML: Leverage the excellent YAML parsing capabilities
-
-## Example
-
-```
-// Example: Setting values
-CSettings.setValue("database/host", "localhost");
-CSettings.setValue("database/port", 5432);
-```
-
-```
-// Example: Reading values
-std::string host = CSettings.value("database/host", "default_host");
-int port = CSettings.value("database/port", 3306);
-Installation and Usage
-Please refer to the README.md file for detailed installation and usage instructions.
-```
 
 ## Contribution
 
